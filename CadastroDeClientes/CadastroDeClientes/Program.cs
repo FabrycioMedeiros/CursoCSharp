@@ -7,7 +7,7 @@ namespace CadastroDeClientes
     class Program
     {
         static Dictionary<int, string> _cadastro = new Dictionary<int, string>();
-        static string _fileName = @"c:\temp\csharp\cadastro.txt";
+        static string _fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"clientes.txt");
         static void Main(string[] args)
         {
             int opcao = 0;
@@ -157,6 +157,7 @@ namespace CadastroDeClientes
         }
 
         static void GravarDadosArquivo(string linhaCadastro)
+        
         {
             using (StreamWriter outputFile = new StreamWriter(_fileName, true))
             {
