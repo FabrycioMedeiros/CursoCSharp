@@ -74,11 +74,22 @@ namespace CadastroDeClientes
             int codigo;
             switch (opcao)
             {
+                //TODO: pensar numa maneira de tirar os campos repetidos pra vlaidar o codigo
                 case 1:
                     CriarNovoCliente();
                     break;
                 case 2:
-                    AlterarCliente();
+                    inicioCase2:
+                    Console.Write("Informe o código do cilente : ");
+                    try{
+                        codigo = int.Parse(Console.ReadLine());      
+                    }
+                    catch(Exception){
+                        Console.WriteLine("Erro na leitura do código. Favor inserir apenas números. Tente novamente");
+                        Console.WriteLine("");
+                        goto inicioCase2;
+                    }                
+                    AlterarCliente(codigo);                    
                     break;             
                 case 3:                  
                     inicioCase3:
@@ -132,10 +143,8 @@ namespace CadastroDeClientes
             }
         }
 
-        static void CriarNovoCliente()
-        {
-            Cabecalho("Inserir um novo cliente");
-
+        static string InserirDadosCliente(){
+            
             //NOME
             Console.WriteLine("Nome..........: ");
             string nome = Console.ReadLine();
@@ -224,19 +233,44 @@ namespace CadastroDeClientes
                 goto inicioAtivo;
             }
 
+            string linhaDados = $"{nome};{celular};{email};{dtaNascimento};{rendaAnual};{ativo}";
+            return linhaDados;
+
+
+        }
+
+        static void CriarNovoCliente()
+        {
+            Cabecalho("Inserir um novo cliente");
+
+           string dados = InserirDadosCliente();
+
             //-----------------------------------------
             // Obter um codigo disponivel na lista
             //-----------------------------------------
             int codigo = ObterNovoCodigoCliente();
             //-----------------------------------------
-            string linhaCadastro = $"{codigo};{nome};{celular};{email};{dtaNascimento};{rendaAnual};{ativo}";
+            string linhaCadastro = $"{codigo};{dados}";
             _cadastro.Add(codigo, linhaCadastro);
             GravarDadosArquivo(linhaCadastro);
         }
 
-        static void AlterarCliente()
+        static void AlterarCliente(int codigo)
         {
-            
+
+            Cabecalho("Inserir um alterar cliente");    
+
+            string dados = InserirDadosCliente();
+
+
+            string linhaCadastro = $"{codigo};{dados}";
+
+            ExcluirCliente(codigo);
+            _cadastro.Add(codigo, linhaCadastro);
+
+            GravarDadosArquivo(linhaCadastro);        
+
+            //TODO: implementar um sistema de rollback
 
         }
 
@@ -253,7 +287,7 @@ namespace CadastroDeClientes
                         {
                             _cadastro.Remove(codigo);
                             System.IO.File.WriteAllText(_fileName, "");
-                            Console.WriteLine("Excluído com sucesso! ");
+                            Console.WriteLine("Operação realizada com sucesso! ");
                         }
                     }
                     foreach (KeyValuePair<int, string> linha in _cadastro)
