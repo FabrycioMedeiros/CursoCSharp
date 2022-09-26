@@ -84,7 +84,8 @@ namespace CadastroDeClientes
                     ConsultarTodosClientes();
                     break;
                 case 5:
-                    //ConsultarTodosClientesAtivos();
+                    ConsultarTodosClientesAtivos();
+                    break;
                 case 6:
                     //InformarRendaMedia();
                 case 7:
@@ -152,6 +153,22 @@ namespace CadastroDeClientes
             {
                 string[] vetor = linha.Value.Split(";");
                 Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+            }
+            Console.ReadKey();
+        }
+
+        static void ConsultarTodosClientesAtivos()
+        {
+            Cabecalho("Consultar todos os clientes ativos");
+            Console.WriteLine("Codigo\t\tNome");
+            Console.WriteLine("================================");
+            foreach (KeyValuePair<int, string> linha in _cadastro)
+            {
+                
+                string[] vetor = linha.Value.Split(";");
+                if (vetor[6] == "1"){
+                    Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                }
             }
             Console.ReadKey();
         }
