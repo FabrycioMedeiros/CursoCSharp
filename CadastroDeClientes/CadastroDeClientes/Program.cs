@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 
 namespace CadastroDeClientes
 {
@@ -76,9 +77,11 @@ namespace CadastroDeClientes
                     break;
                 case 2:
                     AlterarCliente();
-                    break;
-                case 3:
-                    ExcluirCliente();
+                    break;             
+                case 3:                  
+                    Console.Write("Escolhe um codigo cilente : ");
+                    int codigo = int.Parse(Console.ReadLine());      
+                    ExcluirCliente(codigo);                   
                     break;
                 case 4:
                     ConsultarTodosClientes();
@@ -140,14 +143,39 @@ namespace CadastroDeClientes
 
         static void AlterarCliente()
         {
-            //TODO: Ugo vai fazer essa função
+            
 
         }
 
-        static void ExcluirCliente()
+        static void ExcluirCliente(int codigo)
         {
-            
-
+            Cabecalho("Excluir os clientes");
+            {
+                try
+                {
+                    foreach (KeyValuePair<int, string> linha in _cadastro)
+                    {
+                        string[] vetor = linha.Value.Split(";");                                 
+                        if (linha.Key == codigo)
+                        {
+                            _cadastro.Remove(codigo);
+                            System.IO.File.WriteAllText(_fileName, "");
+                            Console.WriteLine("Aprovado de Delete! ");
+                        }
+                    }
+                    foreach (KeyValuePair<int, string> linha in _cadastro)
+                    {
+                        string[] vetor = linha.Value.Split(";");
+                        string linhaCadastro = vetor[0] + ";" + vetor[1] + ";" + vetor[2] + ";" + vetor[3] + ";" + vetor[4] + ";" + vetor[5] + ";" + vetor[6] + ";";
+                        GravarDadosArquivo(linhaCadastro); 
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Excluiu erro: {0}", e.Message);
+                }
+                Console.ReadKey();
+            }
         }
 
 
@@ -250,8 +278,15 @@ namespace CadastroDeClientes
             foreach (string line in System.IO.File.ReadLines(_fileName))
             {                
                 string[] campos = line.Split(";");
+                try { 
                 _cadastro.Add(int.Parse(campos[0]), line);
+                    }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Excluiu erro: {0}", e.Message);
+                }
             }
+            
 
         }
 
