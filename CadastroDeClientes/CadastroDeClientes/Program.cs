@@ -9,6 +9,7 @@ namespace CadastroDeClientes
     {
         static Dictionary<int, string> _cadastro = new Dictionary<int, string>();
         static string _fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"clientes.txt");
+
         static void Main(string[] args)
         {
             int opcao = 0;
@@ -70,6 +71,7 @@ namespace CadastroDeClientes
         /// <param name="opcao">Opção digitada pelo usuário</param>
         static void SelecionarOpcaoDoMenu ( int opcao )
         {
+            int codigo;
             switch (opcao)
             {
                 case 1:
@@ -79,8 +81,16 @@ namespace CadastroDeClientes
                     AlterarCliente();
                     break;             
                 case 3:                  
-                    Console.Write("Escolhe um codigo cilente : ");
-                    int codigo = int.Parse(Console.ReadLine());      
+                    inicioCase3:
+                    Console.Write("Informe o código do cilente : ");
+                    try{
+                        codigo = int.Parse(Console.ReadLine());      
+                    }
+                    catch(Exception){
+                        Console.WriteLine("Erro na leitura do código. Favor inserir apenas números. Tente novamente");
+                        Console.WriteLine("");
+                        goto inicioCase3;
+                    }
                     ExcluirCliente(codigo);                   
                     break;
                 case 4:
@@ -96,8 +106,16 @@ namespace CadastroDeClientes
                     InformarAniversarios();
                     break;
                 case 8:
+                    inicioCase8:
                     Console.WriteLine("Qual o código do cliente desejado?");
-                    int codigo = int.Parse(Console.ReadLine());
+                    try{
+                        codigo = int.Parse(Console.ReadLine());      
+                    }
+                    catch(Exception){
+                        Console.WriteLine("Erro na leitura do código. Favor inserir apenas números. Tente novamente");
+                        Console.WriteLine("");
+                        goto inicioCase8;
+                    }
                     ConsultarClienteCodigo(codigo);
                     break;
                 case 9:
@@ -117,20 +135,95 @@ namespace CadastroDeClientes
         static void CriarNovoCliente()
         {
             Cabecalho("Inserir um novo cliente");
-            //Console.Write("Código........: ");
-            //int codigo = int.Parse(Console.ReadLine());
-            Console.Write("Nome..........: ");
+
+            //NOME
+            Console.WriteLine("Nome..........: ");
             string nome = Console.ReadLine();
-            Console.Write("Celular.......: ");
+
+            //CELULAR
+            inicioCel:
+            Console.WriteLine("Celular.......: (utilize o formato ddd+número digitando apenas números");
             string celular = Console.ReadLine();
-            Console.Write("e-mail........: ");
+
+            long teste;
+            try{
+                teste = long.Parse(celular);
+            }
+            catch(Exception){
+                Console.WriteLine("Número inserido incorretamente. Por favor, tente novamente");
+                Console.WriteLine("Exemplo: 22999999999");
+                goto inicioCel;
+            }
+
+            //EMAIL
+            inicioEmail:
+            Console.WriteLine("e-mail........: ");
             string email = Console.ReadLine();
-            Console.Write("Dta Nascimento: ");
+
+            try{
+                string[] teste2 = email.Split("@");
+                if (teste2.Length > 0 && teste2[0].Length > 0 && teste2[1].Length > 0){
+                    string[] teste3 = teste2[1].Split(".");
+                    if (teste3[0].Length == 0 || teste3[1].Length == 0){
+                        throw new Exception();
+                    }
+                }
+            }
+            catch{
+                Console.WriteLine("Email inserido incorretamente. Por favor, tente novamente");
+                Console.WriteLine("Exemplo: email@dominio.com");
+                goto inicioEmail;                                   
+            }
+
+            //DATA
+            inicioData:
+            Console.WriteLine("Dta Nascimento: (utilize o formato DD/MM/AAAA");
             string dtaNascimento = Console.ReadLine();
-            Console.Write("Renda Anual...: ");
-            float rendaAnual = float.Parse(Console.ReadLine());
-            Console.Write("Ativo.........: ");
-            int ativo = int.Parse(Console.ReadLine());
+
+            try{
+                string[] testeData = dtaNascimento.Split("/");
+                if (testeData.Length != 3 || testeData[0].Length != 2 || testeData[1].Length != 2 || testeData[2].Length != 4){
+                    throw new Exception();
+                }
+            }
+            catch(Exception){
+                Console.WriteLine("Data inserida incorretamente. Por favor, tente novamente");
+                Console.WriteLine("Exemplo: 01/12/1950");
+                goto inicioData;                                  
+
+            }
+
+            //RENDA
+            inicioRenda:
+            Console.WriteLine("Renda Anual...: ");
+            float rendaAnual;
+            try{
+                rendaAnual = float.Parse(Console.ReadLine());
+            }
+            catch(Exception){
+                Console.WriteLine("Valor inserido incorretamente. Por favor, tente novamente");
+                Console.WriteLine("Exemplo: 2000,50");
+                goto inicioRenda;
+            }
+
+            //ATIVO
+            inicioAtivo:
+            Console.WriteLine("Ativo.........: (0 para inativo e 1 para ativo)");
+            
+            int ativo;
+            try{
+                ativo = int.Parse(Console.ReadLine());
+                if (ativo != 1 && ativo != 0){
+                    throw new Exception();
+                }
+            }
+            catch(Exception){
+                Console.WriteLine("Valor inserido incorretamente. Por favor, tente novamente");
+                Console.WriteLine("Formato: 0 para inativo e 1 para ativo");
+                Console.ReadKey();
+                goto inicioAtivo;
+            }
+
             //-----------------------------------------
             // Obter um codigo disponivel na lista
             //-----------------------------------------
@@ -160,7 +253,7 @@ namespace CadastroDeClientes
                         {
                             _cadastro.Remove(codigo);
                             System.IO.File.WriteAllText(_fileName, "");
-                            Console.WriteLine("Aprovado de Delete! ");
+                            Console.WriteLine("Excluído com sucesso! ");
                         }
                     }
                     foreach (KeyValuePair<int, string> linha in _cadastro)
@@ -189,7 +282,9 @@ namespace CadastroDeClientes
             {
 
                 string[] vetor = linha.Value.Split(";");
-                media += int.Parse(vetor[5]);
+                if (vetor[6] == "1"){
+                    media += int.Parse(vetor[5]);
+                }
             }
             media = media / _cadastro.Count;
             Console.WriteLine("Renda Média dos Clientes é de " + media);
@@ -295,13 +390,20 @@ namespace CadastroDeClientes
             string hoje = DateTime.Now.ToShortDateString();
             Console.WriteLine(hoje);
             Cabecalho(" Aniversariantes do dia de hoje:" + hoje);
+            Console.WriteLine("Codigo\t\tNome");
+            Console.WriteLine("================================");
 
             foreach (KeyValuePair<int, string> linha in _cadastro)
             {
-                Console.WriteLine(hoje);
+                // Console.WriteLine(hoje);                
                 string[] vetor = linha.Value.Split(";");
-                if (vetor[4].Substring(0,5) == hoje){
-                    Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                try{
+                    if (vetor[4].Substring(0,5) == hoje.Substring(0,5)){
+                        Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                    }
+                }
+                catch(Exception){
+                    //faz nada, só ignora enão mostra
                 }
             }
             Console.ReadKey();
@@ -319,5 +421,7 @@ namespace CadastroDeClientes
             }
             return ++codigo;
         }
+
+
     }
 }
