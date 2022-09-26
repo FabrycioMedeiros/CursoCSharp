@@ -87,7 +87,8 @@ namespace CadastroDeClientes
                     ConsultarTodosClientesAtivos();
                     break;
                 case 6:
-                    //InformarRendaMedia();
+                    InformarRendaMedia();
+                    break;
                 case 7:
                     InformarAniversarios();
                     break;
@@ -147,6 +148,24 @@ namespace CadastroDeClientes
         {
             
 
+        }
+
+
+        static void InformarRendaMedia()
+        {
+            Cabecalho("Informar Clientes com Renda Média de ");
+            Console.WriteLine("Codigo\t\tNome");
+            Console.WriteLine("================================");
+            var media = 0;
+            foreach (KeyValuePair<int, string> linha in _cadastro)
+            {
+
+                string[] vetor = linha.Value.Split(";");
+                media += int.Parse(vetor[5]);
+            }
+            media = media / _cadastro.Count;
+            Console.WriteLine("Renda Média dos Clientes é de " + media);
+            Console.ReadKey();
         }
 
         static void ConsultarTodosClientes()
@@ -239,8 +258,17 @@ namespace CadastroDeClientes
         static void InformarAniversarios()
         {            
             string hoje = DateTime.Now.ToShortDateString();
+            Console.WriteLine(hoje);
             Cabecalho(" Aniversariantes do dia de hoje:" + hoje);
 
+            foreach (KeyValuePair<int, string> linha in _cadastro)
+            {
+                Console.WriteLine(hoje);
+                string[] vetor = linha.Value.Split(";");
+                if (vetor[4].Substring(0,5) == hoje){
+                    Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                }
+            }
             Console.ReadKey();
         }
 
