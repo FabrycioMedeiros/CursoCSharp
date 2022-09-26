@@ -160,7 +160,7 @@ namespace CadastroDeClientes
                     {
                         string[] vetor = linha.Value.Split(";");
                         string linhaCadastro = vetor[0] + ";" + vetor[1] + ";" + vetor[2] + ";" + vetor[3] + ";" + vetor[4] + ";" + vetor[5] + ";" + vetor[6] + ";";
-                        GravarDadosArquivo(linhaCadastro);
+                        GravarDadosArquivo(linhaCadastro); 
                     }
                 }
                 catch (Exception e)
