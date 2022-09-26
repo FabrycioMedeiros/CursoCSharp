@@ -92,9 +92,14 @@ namespace CadastroDeClientes
                     InformarAniversarios();
                     break;
                 case 8:
-                    //ConsultarClienteCodigo()
+                    Console.WriteLine("Qual o código do cliente desejado?");
+                    int codigo = int.Parse(Console.ReadLine());
+                    ConsultarClienteCodigo(codigo);
+                    break;
                 case 9:
-                    //ConsultarClienteNome()
+                    Console.WriteLine("Qual o nome do cliente desejado?");
+                    string nome = Console.ReadLine();                
+                    ConsultarClienteNome(nome);
                     break;
                 case 10:
                     break;
@@ -171,6 +176,45 @@ namespace CadastroDeClientes
                 }
             }
             Console.ReadKey();
+        }
+
+        static int ConsultarClienteCodigo(int codigo)
+        {
+            foreach (KeyValuePair<int, string> linha in _cadastro)
+            {
+                if (linha.Key == codigo){
+                    string[] vetor = linha.Value.Split(";");
+                    Cabecalho("Consulta de cliente por código");
+                    Console.WriteLine("Codigo\t\tNome");
+                    Console.WriteLine("================================");
+                    Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                    Console.ReadKey();
+                    return 0;
+                }
+            }
+            Console.WriteLine("Cliente não encontrado");
+            Console.ReadKey();
+            return 0;
+        }
+
+        static int ConsultarClienteNome(string nome)
+        {
+
+            Cabecalho("Consulta de cliente por nome");
+            Console.WriteLine("Codigo\t\tNome");
+            Console.WriteLine("================================");
+            foreach (KeyValuePair<int, string> linha in _cadastro)
+            {
+                string[] vetor = linha.Value.Split(";");
+                if (vetor[1] == nome){
+                    Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                    Console.ReadKey();
+                    return 0;
+                }
+            }
+            Console.WriteLine("Cliente não encontrado");
+            Console.ReadKey();
+            return 0;
         }
 
         static void GravarDadosArquivo(string linhaCadastro)
