@@ -74,13 +74,13 @@ namespace CadastroDeClientes
             int codigo;
             switch (opcao)
             {
-                //TODO: pensar numa maneira de tirar os campos repetidos pra vlaidar o codigo
+                //TODO: pensar numa maneira de tirar os campos repetidos pra validar o codigo
                 case 1:
                     CriarNovoCliente();
                     break;
                 case 2:
                     inicioCase2:
-                    Console.Write("Informe o código do cilente : ");
+                    Console.Write("Informe o código do cliente : ");
                     try{
                         codigo = int.Parse(Console.ReadLine());      
                     }
@@ -93,7 +93,7 @@ namespace CadastroDeClientes
                     break;             
                 case 3:                  
                     inicioCase3:
-                    Console.Write("Informe o código do cilente : ");
+                    Console.Write("Informe o código do cliente : ");
                     try{
                         codigo = int.Parse(Console.ReadLine());      
                     }
@@ -137,7 +137,7 @@ namespace CadastroDeClientes
                 case 10:
                     break;
                 default:
-                    Console.WriteLine("Opção fora do intervalor de 1 até 10, por favor, digite novamente!!!");
+                    Console.WriteLine("Opção fora do intervalo de 1 até 10, por favor, digite novamente!!!");
                     Console.ReadKey();
                     break;
             }
@@ -270,8 +270,7 @@ namespace CadastroDeClientes
 
             GravarDadosArquivo(linhaCadastro);        
 
-            //TODO: implementar um sistema de rollback
-
+           
         }
 
         static void ExcluirCliente(int codigo)
@@ -308,8 +307,6 @@ namespace CadastroDeClientes
 
         static void InformarRendaMedia()
         {
-            Cabecalho("Informar Clientes com Renda Média de ");
-            Console.WriteLine("Codigo\t\tNome");
             Console.WriteLine("================================");
             var media = 0;
             foreach (KeyValuePair<int, string> linha in _cadastro)
@@ -328,12 +325,14 @@ namespace CadastroDeClientes
         static void ConsultarTodosClientes()
         {
             Cabecalho("Consultar todos os clientes");
-            Console.WriteLine("Codigo\t\tNome");
-            Console.WriteLine("================================");
+            Console.WriteLine("Codigo\t\tNome\t\tcelular\t\t\temail\t\tdtaNascimento\t\trendaAnual");
+            Console.WriteLine("===============================================================");
             foreach (KeyValuePair<int, string> linha in _cadastro)
             {
                 string[] vetor = linha.Value.Split(";");
-                Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                if (vetor[6] == "1"){
+                    Console.WriteLine("{0}\t\t{1}\t\t{2}\t{3}\t{4}\t\t{5}", linha.Key, vetor[1], vetor[2], vetor[3], vetor[4], vetor[5]);
+                }
             }
             Console.ReadKey();
         }
@@ -341,15 +340,16 @@ namespace CadastroDeClientes
         static void ConsultarTodosClientesAtivos()
         {
             Cabecalho("Consultar todos os clientes ativos");
-            Console.WriteLine("Codigo\t\tNome");
-            Console.WriteLine("================================");
+            Console.WriteLine("Codigo\t\tNome\t\tcelular\t\t\temail\t\tdtaNascimento\t\trendaAnual");
+            Console.WriteLine("==============================================================");
             foreach (KeyValuePair<int, string> linha in _cadastro)
             {
                 
                 string[] vetor = linha.Value.Split(";");
-                if (vetor[6] == "1"){
-                    Console.WriteLine("{0}\t\t{1}", linha.Key, vetor[1]);
+                if (vetor[6] == " 1 "){
+                    Console.WriteLine("{0}\t\t{1}\t\t{2}\t{3}\t{4}\t\t{5}", linha.Key, vetor[1], vetor[2], vetor[3], vetor[4], vetor[5]);
                 }
+                
             }
             Console.ReadKey();
         }
@@ -437,8 +437,10 @@ namespace CadastroDeClientes
                     }
                 }
                 catch(Exception){
-                    //faz nada, só ignora enão mostra
+                    //Mostra mensagem de nenhum aniversariante encontrado
                 }
+
+                Console.WriteLine("Nenhum aniversariante encontrado neste dia.");
             }
             Console.ReadKey();
         }
